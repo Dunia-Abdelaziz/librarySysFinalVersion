@@ -83,13 +83,11 @@ namespace LibrarySystem
             Console.WriteLine("Library System Console App");
             Console.WriteLine("1. book");
             Console.WriteLine("2. borrower");
-            Console.WriteLine("3. Librarian.");
-            Console.WriteLine("4. .");
-            Console.WriteLine("5. Exit");
+            Console.WriteLine("3. Exit");
 
             while (true)
             {
-                Console.Write("Enter your choice (1-5): ");
+                Console.Write("Enter your choice (1-3): ");
                 var entity = Console.ReadLine();
                 if (entity == "1")
                 {
