@@ -28,7 +28,7 @@ namespace DAL.Factory
 
         public IBorrowerRepository CreateBorrowerRepository()
         {
-            var collection = _database.GetCollection<Borrower>("Books");
+            var collection = _database.GetCollection<Borrower>("Borrowers");
             return new MongoBorrowerRepository(collection, _database.DatabaseNamespace.DatabaseName);
         }
 

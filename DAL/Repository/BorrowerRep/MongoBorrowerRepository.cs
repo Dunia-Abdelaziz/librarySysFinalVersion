@@ -49,6 +49,7 @@ namespace DAL.Repository.BorrowerRep
         public Borrower LogIn(string username, string password)
         {
 
+            
             var filter = Builders<Borrower>.Filter.And(
                 Builders<Borrower>.Filter.Eq("UserName", username),
                 Builders<Borrower>.Filter.Eq("Password", password)

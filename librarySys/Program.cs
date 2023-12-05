@@ -1,5 +1,5 @@
 ﻿using BLL.DTOs;
-using BLL.Services;
+using BLL.Services.BookServices;
 using BLL.Services.BorrowerServices;
 using DAL.Factory;
 using DAL.Repository.BookRep;
@@ -66,9 +66,7 @@ namespace LibrarySystem
             DIContainer.RegisterInstance<IBorrowerServices>(new BorrowerServices(borrowerRepository));
 
             // Create an instance of the Program class (or use dependency injection)
-
-            var program = new Program(DIContainer.Resolve<IBookService>(),DIContainer.Resolve<IBorrowerServices>()
-);
+            var program = new Program(DIContainer.Resolve<IBookService>(),DIContainer.Resolve<IBorrowerServices>());
 
 
             Console.WriteLine("Library System Console App");
@@ -149,8 +147,8 @@ namespace LibrarySystem
             Console.Write("Enter Password: ");
             var password = Console.ReadLine();
 
-            var b = _borrowerServices.LogIn(username, password);
-            if (b == null)
+            BorrowerDTO b = _borrowerServices.LogIn(username, password);
+            if (b.UserName != username && b.Password != password)
             {
                 Console.WriteLine("user name or password is incorrect");
             }

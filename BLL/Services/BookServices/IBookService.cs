@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BLL.Services
+namespace BLL.Services.BookServices
 {
     public interface IBookService
     {

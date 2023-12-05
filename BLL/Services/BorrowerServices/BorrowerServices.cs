@@ -73,7 +73,7 @@ namespace BLL.Services.BorrowerServices
             }
             else
             {
-                return null;
+                return new BorrowerDTO();
             }
         }
 
