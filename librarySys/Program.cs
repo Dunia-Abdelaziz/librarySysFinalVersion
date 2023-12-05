@@ -27,7 +27,8 @@ namespace LibrarySystem
     {
 
         private static IBookService _bookService;
-        private IBorrowerServices _borrowerServices;
+        private static IBorrowerServices _borrowerServices;
+
 
         // Constructor for Dependency Injection
         public Program(IBookService bookService)
@@ -37,7 +38,12 @@ namespace LibrarySystem
 
         public Program(IBorrowerServices borrowerServices)
         {
-            this._borrowerServices = borrowerServices;
+            _borrowerServices = borrowerServices;
+        }
+        public Program(IBookService bookService, IBorrowerServices borrowerServices)
+        {
+            _bookService = bookService;
+            _borrowerServices = borrowerServices;
         }
 
         static void Main()
@@ -60,12 +66,14 @@ namespace LibrarySystem
             DIContainer.RegisterInstance<IBorrowerServices>(new BorrowerServices(borrowerRepository));
 
             // Create an instance of the Program class (or use dependency injection)
-            var program = new Program(DIContainer.Resolve<IBookService>());
-            var program1 = new Program(DIContainer.Resolve<IBorrowerServices>());
+
+            var program = new Program(DIContainer.Resolve<IBookService>(),DIContainer.Resolve<IBorrowerServices>()
+);
+
 
             Console.WriteLine("Library System Console App");
             Console.WriteLine("1. book");
-            Console.WriteLine("2.librarian");
+            Console.WriteLine("2. borrower");
             Console.WriteLine("3. .");
             Console.WriteLine("4. .");
             Console.WriteLine("5. Exit");
@@ -141,7 +149,6 @@ namespace LibrarySystem
             Console.Write("Enter Password: ");
             var password = Console.ReadLine();
 
-
             var b = _borrowerServices.LogIn(username, password);
             if (b == null)
             {
@@ -151,8 +158,8 @@ namespace LibrarySystem
             {
                 Console.WriteLine("Borrower added successfully.");
             }
-
         }
+
 
         void BookRun()
         {
