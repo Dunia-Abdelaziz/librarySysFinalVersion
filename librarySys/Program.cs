@@ -9,41 +9,35 @@ using Microsoft.Extensions.DependencyInjection;
 using BLL.Services.LibrarianServices;
 using DAL.Repository.LibrarianRep;
 using DAL.Repository.LoanRep;
+using BLL.Services.WeatherService;
+using BLL.weaterFactory;
 
 namespace LibrarySystem
 {
-    public static class DIContainer
-    {
-        private static readonly Dictionary<Type, object> _container = new Dictionary<Type, object>();
-
-        public static void RegisterInstance<TInterface>(TInterface instance)
-        {
-            _container[typeof(TInterface)] = instance;
-        }
-
-        public static TInterface Resolve<TInterface>()
-        {
-            return (TInterface)_container[typeof(TInterface)];
-        }
-    }
-
 
     class Program
     {
         private static IBookService _bookService;
         private static IBorrowerServices _borrowerServices;
         private static ILibrarianService _librarianService;
-        public Program(IBookService bookService, IBorrowerServices borrowerServices, ILibrarianService librarianService)
+        private static IWeatherService _weatherService;
+        public Program(IBookService bookService, IBorrowerServices borrowerServices, ILibrarianService librarianService, IWeatherService weatherService)
         {
             _bookService = bookService;
             _borrowerServices = borrowerServices;
             _librarianService = librarianService;
+            _weatherService = weatherService;
         }
 
-        static void Main()
+        static async Task Main()
         {
             var connectionString = @"mongodb://localhost:27017/";
             var databaseName = "library";
+            // Replace "YOUR_API_KEY" with your actual OpenWeatherMap API key
+            string apiKey = "958a0cca7d6e90effe76435c6f3c35d7";
+            // Replace "London" with the desired city name
+            string cityName = "London";
+
             var serviceProvider = new ServiceCollection() // Replace YourMapperImplementation with your actual implementation
                 .AddScoped<MongoRepositoryFactory>(provider => new MongoRepositoryFactory(connectionString, databaseName))
                 .AddScoped<IBookRepository>(provider => provider.GetService<MongoRepositoryFactory>().CreateBookRepository())
@@ -53,14 +47,39 @@ namespace LibrarySystem
                 .AddScoped<IBookService, BookService>()
                 .AddScoped<IBorrowerServices, BorrowerServices>()
                 .AddScoped<ILibrarianService, LibrarianService>()
-                .BuildServiceProvider();
+                .AddHttpClient()
+                    .AddSingleton<IWeatherServiceFactory, OpenWeatherMapServiceFactory>(provider =>
+                    {
+                        var httpClient = provider.GetRequiredService<HttpClient>();
+                        return new OpenWeatherMapServiceFactory(httpClient, apiKey);
+                    })
+                    .AddSingleton<IWeatherService>(provider =>
+                    {
+                        var factory = provider.GetRequiredService<IWeatherServiceFactory>();
+                        return factory.CreateWeatherService();
+                    })
+                    .BuildServiceProvider();
 
             // Resolve the book service and borrower service from the container
+            _weatherService = serviceProvider.GetRequiredService<IWeatherService>();
             _bookService = serviceProvider.GetService<IBookService>();
             _borrowerServices = serviceProvider.GetService<IBorrowerServices>();
             _librarianService = serviceProvider.GetService<ILibrarianService>();
 
-            var program = new Program(_bookService, _borrowerServices, _librarianService);
+            var program = new Program(_bookService, _borrowerServices, _librarianService, _weatherService);
+            try
+            {
+                // Use the weather service to fetch and process weather data
+                var weatherDTO = await _weatherService.GetWeatherDataAsync(cityName);
+
+                // Display the city name and temperature on the console
+                Console.WriteLine($"City: {weatherDTO.CityName}");
+                Console.WriteLine($"Temperature: {weatherDTO.TemperatureCelsius}°C\n\n");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred: {ex.Message}");
+            }
             Console.WriteLine("Library System Console App");
             Console.WriteLine("1. book");
             Console.WriteLine("2. borrower");
