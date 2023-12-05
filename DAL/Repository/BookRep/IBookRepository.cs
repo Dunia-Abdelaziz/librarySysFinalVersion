@@ -15,5 +15,6 @@ namespace DAL.Repository.BookRep
         void Add(Book book);
         void Update(Book book);
         void Delete(ObjectId id);
+        Book GetByTitle(string bookName);
     }
 }

@@ -41,7 +41,7 @@ namespace DAL.Repository.LibrarianRep
             return _collection.Find(_ => true).ToList();
         }
 
-        public Librarian logIn(string username, string password)
+        public Librarian LogIn(string username, string password)
         {
             var filter = Builders<Librarian>.Filter.And(
                 Builders<Librarian>.Filter.Eq("UserName", username),

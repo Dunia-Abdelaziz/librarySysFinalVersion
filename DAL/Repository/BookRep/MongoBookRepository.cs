@@ -45,5 +45,10 @@ namespace DAL.Repository.BookRep
         {
             _collection.DeleteOne(book => book.Id == id);
         }
+
+        public Book GetByTitle(string bookName)
+        {
+            return _collection.Find(book => book.Title == bookName).FirstOrDefault();
+        }
     }
 }

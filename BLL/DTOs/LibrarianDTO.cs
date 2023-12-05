@@ -6,7 +6,10 @@ using System.Threading.Tasks;
 
 namespace BLL.DTOs
 {
-    internal class LibrarianDTO
+    public class LibrarianDTO
     {
+        public string Name { get; set; }
+        public string UserName { get; set; }
+        public string Password { get; set; }
     }
 }
