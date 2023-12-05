@@ -1,9 +1,12 @@
 ﻿using BLL.DTOs;
-using BLL.Services.BookServices;
+using BLL.Services;
 using BLL.Services.BorrowerServices;
 using DAL.Factory;
 using DAL.Repository.BookRep;
 using DAL.Repository.BorrowerRep;
+using System;
+using Microsoft.Extensions.DependencyInjection;
+using BLL.Services.BookServices;
 
 namespace LibrarySystem
 {
@@ -25,21 +28,8 @@ namespace LibrarySystem
 
     class Program
     {
-
         private static IBookService _bookService;
         private static IBorrowerServices _borrowerServices;
-
-
-        // Constructor for Dependency Injection
-        public Program(IBookService bookService)
-        {
-            _bookService = bookService;
-        }
-
-        public Program(IBorrowerServices borrowerServices)
-        {
-            _borrowerServices = borrowerServices;
-        }
         public Program(IBookService bookService, IBorrowerServices borrowerServices)
         {
             _bookService = bookService;
@@ -50,32 +40,26 @@ namespace LibrarySystem
         {
             var connectionString = @"mongodb://localhost:27017/";
             var databaseName = "library";
+            var serviceProvider = new ServiceCollection() // Replace YourMapperImplementation with your actual implementation
+                .AddScoped<MongoRepositoryFactory>(provider => new MongoRepositoryFactory(connectionString, databaseName))
+                .AddScoped<IBookRepository>(provider => provider.GetService<MongoRepositoryFactory>().CreateBookRepository())
+                .AddScoped<IBorrowerRepository>(provider => provider.GetService<MongoRepositoryFactory>().CreateBorrowerRepository())
+                .AddScoped<IBookService, BookService>()
+                .AddScoped<IBorrowerServices, BorrowerServices>()
+                .BuildServiceProvider();
 
-
-            var mongoRepositoryFactory = new MongoRepositoryFactory(connectionString, databaseName);
-
-            // Use the factory to create the book repository
-            var bookRepository = mongoRepositoryFactory.CreateBookRepository();
-            var borrowerRepository = mongoRepositoryFactory.CreateBorrowerRepository();
-
-            // Register instances in the DI container (if needed)
-            DIContainer.RegisterInstance<IBookRepository>(bookRepository);
-            DIContainer.RegisterInstance<IBookService>(new BookService(bookRepository));
-
-            DIContainer.RegisterInstance<IBorrowerRepository>(borrowerRepository);
-            DIContainer.RegisterInstance<IBorrowerServices>(new BorrowerServices(borrowerRepository));
-
-            // Create an instance of the Program class (or use dependency injection)
-            var program = new Program(DIContainer.Resolve<IBookService>(),DIContainer.Resolve<IBorrowerServices>());
-
-
+            // Resolve the book service and borrower service from the container
+            _bookService = serviceProvider.GetService<IBookService>();
+            _borrowerServices = serviceProvider.GetService<IBorrowerServices>();
+            var program = new Program(_bookService, _borrowerServices);
             Console.WriteLine("Library System Console App");
             Console.WriteLine("1. book");
             Console.WriteLine("2. borrower");
             Console.WriteLine("3. .");
             Console.WriteLine("4. .");
             Console.WriteLine("5. Exit");
-            while(true)
+
+            while (true)
             {
                 Console.Write("Enter your choice (1-5): ");
                 var entity = Console.ReadLine();
@@ -83,15 +67,83 @@ namespace LibrarySystem
                 {
                     // Run the application
                     program.BookRun();
-                }else if (entity == "2")
+                }
+                else if (entity == "2")
                 {
                     program.BorrowerRun();
                 }
-                   
+
             }
-
-
         }
+
+        //        private static IBookService _bookService;
+        //        private static IBorrowerServices _borrowerServices;
+
+
+        //        // Constructor for Dependency Injection
+        //        public Program(IBookService bookService)
+        //        {
+        //            _bookService = bookService;
+        //        }
+
+        //        public Program(IBorrowerServices borrowerServices)
+        //        {
+        //            _borrowerServices = borrowerServices;
+        //        }
+        //        public Program(IBookService bookService, IBorrowerServices borrowerServices)
+        //        {
+        //            _bookService = bookService;
+        //            _borrowerServices = borrowerServices;
+        //        }
+
+        //        static void Main()
+        //        {
+        //            var connectionString = @"mongodb://localhost:27017/";
+        //            var databaseName = "library";
+
+
+        //            var mongoRepositoryFactory = new MongoRepositoryFactory(connectionString, databaseName);
+
+        //            // Use the factory to create the book repository
+        //            var bookRepository = mongoRepositoryFactory.CreateBookRepository();
+        //            var borrowerRepository = mongoRepositoryFactory.CreateBorrowerRepository();
+
+        //            // Register instances in the DI container (if needed)
+        //            DIContainer.RegisterInstance<IBookRepository>(bookRepository);
+        //            DIContainer.RegisterInstance<IBookService>(new BookService(bookRepository));
+
+        //            DIContainer.RegisterInstance<IBorrowerRepository>(borrowerRepository);
+        //            DIContainer.RegisterInstance<IBorrowerServices>(new BorrowerServices(borrowerRepository));
+
+        //            // Create an instance of the Program class (or use dependency injection)
+
+        //            var program = new Program(DIContainer.Resolve<IBookService>(),DIContainer.Resolve<IBorrowerServices>()
+        //);
+
+
+        //            Console.WriteLine("Library System Console App");
+        //            Console.WriteLine("1. book");
+        //            Console.WriteLine("2. borrower");
+        //            Console.WriteLine("3. .");
+        //            Console.WriteLine("4. .");
+        //            Console.WriteLine("5. Exit");
+        //            while(true)
+        //            {
+        //                Console.Write("Enter your choice (1-5): ");
+        //                var entity = Console.ReadLine();
+        //                if (entity == "1")
+        //                {
+        //                    // Run the application
+        //                    program.BookRun();
+        //                }else if (entity == "2")
+        //                {
+        //                    program.BorrowerRun();
+        //                }
+
+        //            }
+
+
+        //        }
 
         void BorrowerRun()
         {
@@ -99,7 +151,7 @@ namespace LibrarySystem
             Console.WriteLine("1. SignIn");
             Console.WriteLine("2. SignUp");
             Console.WriteLine("3. Exit");
-            while(true)
+            while (true)
             {
                 Console.Write("Enter your choice (1-3): ");
                 var BorrowerChoice = Console.ReadLine();
@@ -133,7 +185,7 @@ namespace LibrarySystem
             Console.Write("Enter Password: ");
             var password = Console.ReadLine();
 
-            var BorrowerDto = new BorrowerDTO { Name = name, UserName = username, Password = password }; 
+            var BorrowerDto = new BorrowerDTO { Name = name, UserName = username, Password = password };
             _borrowerServices.AddBorrower(BorrowerDto);
 
             Console.WriteLine("Borrower added successfully.");
@@ -147,8 +199,8 @@ namespace LibrarySystem
             Console.Write("Enter Password: ");
             var password = Console.ReadLine();
 
-            BorrowerDTO b = _borrowerServices.LogIn(username, password);
-            if (b.UserName != username && b.Password != password)
+            var b = _borrowerServices.LogIn(username, password);
+            if (b == null)
             {
                 Console.WriteLine("user name or password is incorrect");
             }
