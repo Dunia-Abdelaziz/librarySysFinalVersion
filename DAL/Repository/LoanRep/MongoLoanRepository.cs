@@ -36,12 +36,10 @@ namespace DAL.Repository.LoanRep
 
         public Loan GetByBorrowerAndBook(Borrower borrowers, Book books)
         {
-            var filter = Builders<Loan>.Filter.And(
-                    Builders<Loan>.Filter.Eq("BorrowerId", borrowers.Id),
-                    Builders<Loan>.Filter.Eq("BookId", books.Id)
-                );
+            var filter = Builders<Loan>.Filter.Eq(x => x.BorrowerId, borrowers.Id) &
+              Builders<Loan>.Filter.Eq(x => x.BookId, books.Id);
 
-            return _collection.Find(filter).First();
+            return _collection.Find(filter).FirstOrDefault();
         }
 
         public Loan GetById(ObjectId id)

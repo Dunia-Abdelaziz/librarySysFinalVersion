@@ -64,9 +64,31 @@ namespace BLL.Services.LibrarianServices
 
 
         public bool ReturnBook(string bookName, string borrowerName)
-        { 
+        {
+            Console.WriteLine("inside BorrowBook in LibrariansBLL");
+            var borrower = _borrowerRepository.SearchByUserName(borrowerName);
+            var book = _bookRepository.GetByTitle(bookName);
 
-      
+            if (book != null)
+            {
+                var loan = _loanRepository.GetByBorrowerAndBook(borrower, book);
+                if (loan != null && book.AllowBorrow == false)
+                {
+                    //delete loan
+                    _loanRepository.Delete(loan.Id);
+                    //Set availability true
+                    book.AllowBorrow = true;
+                    _bookRepository.Update(book);
+                    return true;
+                }
+                else if (loan != null || book.AllowBorrow == true)
+                {
+                    return false;
+                }
+
+            }
+            return false;
+
         }
 
         public LibrarianDTO? LogIn(string username, string password)
