@@ -50,12 +50,8 @@ namespace BLL.Services.LibrarianServices
                 }
                 else
                 {
-                    _loanRepository.Add(new Loan
-                    {
-                        BorrowerId = borrower.Id.ToInt32(),
-                        BookId = book.Id.ToInt32(),
-                        BorrowDate = DateTime.Now
-                    });
+                    _loanRepository.Add(new Loan { BorrowerId = borrower.Id,BookId = book.Id,BorrowDate=DateTime.Now});
+       
 
                     book.AllowBorrow = false;
                     _bookRepository.Update(book);
