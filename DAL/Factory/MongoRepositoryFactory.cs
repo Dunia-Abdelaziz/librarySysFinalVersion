@@ -1,6 +1,7 @@
 ﻿using DAL.Entities;
 using DAL.Repository.BookRep;
 using DAL.Repository.BorrowerRep;
+using DAL.Repository.LibrarianRep;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
@@ -30,6 +31,11 @@ namespace DAL.Factory
         {
             var collection = _database.GetCollection<Borrower>("Books");
             return new MongoBorrowerRepository(collection, _database.DatabaseNamespace.DatabaseName);
+        }
+        public ILibrarianRepository CreateLibrarianRepository()
+        {
+            var collection = _database.GetCollection<Librarian>("Librarians");
+            return new MongoLibrarianRepsitory(collection, _database.DatabaseNamespace.DatabaseName);
         }
 
     }
