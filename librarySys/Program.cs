@@ -34,7 +34,7 @@ namespace LibrarySystem
 
         static void Main()
         {
-            var connectionString = @"mongodb://library1:LRkOeXBkvRuropqJMFDk8N39lUmYdLctDtk2Y90JBMaWEqSBxpBlgwUiAp5iLX6iP8Qiwe27s7O0ACDbHnpnNw==@library1.mongo.cosmos.azure.com:10255/?ssl=true&replicaSet=globaldb&retrywrites=false&maxIdleTimeMS=120000&appName=@library1@";
+            var connectionString = @"mongodb://localhost:27017/";
             var databaseName = "library";
 
 

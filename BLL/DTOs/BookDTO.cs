@@ -10,7 +10,7 @@ namespace BLL.DTOs
     {
         public string Title { get; set; }
         public string Author { get; set; }
-        
+        public bool AllowBorrow {  get; set; }
         // Add other book properties as needed
     }
 }

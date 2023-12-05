@@ -12,5 +12,6 @@ namespace DAL.Entities
         public ObjectId Id { get; set; }
         public string Title { get; set; }
         public string Author { get; set; }
+        public bool AllowBorrow { get; set; }
     }
 }
