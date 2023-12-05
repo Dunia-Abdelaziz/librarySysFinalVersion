@@ -150,7 +150,7 @@ namespace LibrarySystem
             Console.WriteLine("1. SignIn");
             Console.WriteLine("2. SignUp");
             Console.WriteLine("3. Exit");
-            while(true)
+            while (true)
             {
                 Console.Write("Enter your choice (1-3): ");
                 var BorrowerChoice = Console.ReadLine();
@@ -184,7 +184,7 @@ namespace LibrarySystem
             Console.Write("Enter Password: ");
             var password = Console.ReadLine();
 
-            var BorrowerDto = new BorrowerDTO { Name = name, UserName = username, Password = password }; 
+            var BorrowerDto = new BorrowerDTO { Name = name, UserName = username, Password = password };
             _borrowerServices.AddBorrower(BorrowerDto);
 
             Console.WriteLine("Borrower added successfully.");
