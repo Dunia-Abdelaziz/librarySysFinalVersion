@@ -1,7 +1,9 @@
 ﻿using BLL.DTOs;
 using BLL.Services;
+using BLL.Services.BorrowerServices;
 using DAL.Factory;
 using DAL.Repository.BookRep;
+using DAL.Repository.BorrowerRep;
 
 namespace LibrarySystem
 {
@@ -25,11 +27,17 @@ namespace LibrarySystem
     {
 
         private static IBookService _bookService;
+        private IBorrowerServices _borrowerServices;
 
         // Constructor for Dependency Injection
         public Program(IBookService bookService)
         {
             _bookService = bookService;
+        }
+
+        public Program(IBorrowerServices borrowerServices)
+        {
+            this._borrowerServices = borrowerServices;
         }
 
         static void Main()
@@ -42,22 +50,113 @@ namespace LibrarySystem
 
             // Use the factory to create the book repository
             var bookRepository = mongoRepositoryFactory.CreateBookRepository();
+            var borrowerRepository = mongoRepositoryFactory.CreateBorrowerRepository();
 
             // Register instances in the DI container (if needed)
             DIContainer.RegisterInstance<IBookRepository>(bookRepository);
             DIContainer.RegisterInstance<IBookService>(new BookService(bookRepository));
 
+            DIContainer.RegisterInstance<IBorrowerRepository>(borrowerRepository);
+            DIContainer.RegisterInstance<IBorrowerServices>(new BorrowerServices(borrowerRepository));
+
             // Create an instance of the Program class (or use dependency injection)
             var program = new Program(DIContainer.Resolve<IBookService>());
+            var program1 = new Program(DIContainer.Resolve<IBorrowerServices>());
 
-            // Run the application
-            program.Run();
+            Console.WriteLine("Library System Console App");
+            Console.WriteLine("1. book");
+            Console.WriteLine("2.librarian");
+            Console.WriteLine("3. .");
+            Console.WriteLine("4. .");
+            Console.WriteLine("5. Exit");
+            while(true)
+            {
+                Console.Write("Enter your choice (1-5): ");
+                var entity = Console.ReadLine();
+                if (entity == "1")
+                {
+                    // Run the application
+                    program.BookRun();
+                }else if (entity == "2")
+                {
+                    program.BorrowerRun();
+                }
+                   
+            }
+
 
         }
 
-        void Run()
+        void BorrowerRun()
         {
-            Console.WriteLine("Library System Console App");
+            Console.WriteLine("Library System <Borrower>");
+            Console.WriteLine("1. SignIn");
+            Console.WriteLine("2. SignUp");
+            Console.WriteLine("3. Exit");
+            while(true)
+            {
+                Console.Write("Enter your choice (1-3): ");
+                var BorrowerChoice = Console.ReadLine();
+                switch (BorrowerChoice)
+                {
+                    case "1":
+                        SignIn();
+                        break;
+                    case "2":
+                        AddNewBorrower();
+                        break;
+                    case "3":
+                        Environment.Exit(0);
+                        break;
+                    default:
+                        Console.WriteLine("Invalid choice. Please enter a number between 1 and 3.");
+                        break;
+                }
+            }
+
+        }
+
+        void AddNewBorrower()
+        {
+            Console.Write("Enter Name: ");
+            var name = Console.ReadLine();
+
+            Console.Write("Enter UserName: ");
+            var username = Console.ReadLine();
+
+            Console.Write("Enter Password: ");
+            var password = Console.ReadLine();
+
+            var BorrowerDto = new BorrowerDTO { Name = name, UserName = username, Password = password }; 
+            _borrowerServices.AddBorrower(BorrowerDto);
+
+            Console.WriteLine("Borrower added successfully.");
+        }
+
+        void SignIn()
+        {
+            Console.Write("Enter UserName: ");
+            var username = Console.ReadLine();
+
+            Console.Write("Enter Password: ");
+            var password = Console.ReadLine();
+
+
+            var b = _borrowerServices.LogIn(username, password);
+            if (b == null)
+            {
+                Console.WriteLine("user name or password is incorrect");
+            }
+            else
+            {
+                Console.WriteLine("Borrower added successfully.");
+            }
+
+        }
+
+        void BookRun()
+        {
+            Console.WriteLine("Library System <Books>");
             Console.WriteLine("1. View All Books");
             Console.WriteLine("2. Add New Book");
             Console.WriteLine("3. Update Book");
