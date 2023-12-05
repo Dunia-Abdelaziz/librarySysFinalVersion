@@ -16,5 +16,6 @@ namespace DAL.Repository.LibrarianRep
         void Update(Librarian librarian);
         void Delete(ObjectId id);
         Librarian logIn(string username, string password);
+
     }
 }

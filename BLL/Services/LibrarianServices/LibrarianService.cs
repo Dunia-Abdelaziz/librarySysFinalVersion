@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace BLL.Services.Librarian
 {
-    internal class LibrarianService
+    public class LibrarianService
     {
+
     }
 }
