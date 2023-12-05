@@ -62,9 +62,11 @@ namespace BLL.Services.LibrarianServices
             return false;
         }
 
+
         public bool ReturnBook(string bookName, string borrowerName)
-        {
-            throw new NotImplementedException();
+        { 
+
+      
         }
 
         public LibrarianDTO? LogIn(string username, string password)
