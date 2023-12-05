@@ -2,6 +2,7 @@
 using DAL.Repository.BookRep;
 using DAL.Repository.BorrowerRep;
 using DAL.Repository.LibrarianRep;
+using DAL.Repository.LoanRep;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
@@ -36,6 +37,11 @@ namespace DAL.Factory
         {
             var collection = _database.GetCollection<Librarian>("Librarians");
             return new MongoLibrarianRepsitory(collection, _database.DatabaseNamespace.DatabaseName);
+        }
+        public ILoanRepository CreateLoanRepository()
+        {
+            var collection = _database.GetCollection<Loan>("Loans");
+            return new MongoLoanRepository(collection, _database.DatabaseNamespace.DatabaseName);
         }
 
     }
