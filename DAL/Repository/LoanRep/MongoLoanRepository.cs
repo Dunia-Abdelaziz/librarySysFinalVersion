@@ -13,10 +13,9 @@ namespace DAL.Repository.LoanRep
     {
         private readonly IMongoCollection<Loan> _collection;
         private readonly string _databaseName;
-        public MongoLoanRepository(IMongoCollection<Loan> collection, string databaseName)
+        public MongoLoanRepository(IMongoCollection<Loan> collection)
         {
             _collection = collection;
-            _databaseName = databaseName;
         }
 
         public void Add(Loan loan)
