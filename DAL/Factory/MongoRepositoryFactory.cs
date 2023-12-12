@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace DAL.Factory
 {
-    public class MongoRepositoryFactory
+    public class MongoRepositoryFactory : IMongoRepositoryFactory
     {
         private readonly IMongoDatabase _database;
 
@@ -25,23 +25,23 @@ namespace DAL.Factory
         public IBookRepository CreateBookRepository()
         {
             var collection = _database.GetCollection<Book>("Books");
-            return new MongoBookRepository(collection, _database.DatabaseNamespace.DatabaseName);
+            return new MongoBookRepository(collection);
         }
 
         public IBorrowerRepository CreateBorrowerRepository()
         {
             var collection = _database.GetCollection<Borrower>("Borrowers");
-            return new MongoBorrowerRepository(collection, _database.DatabaseNamespace.DatabaseName);
+            return new MongoBorrowerRepository(collection);
         }
         public ILibrarianRepository CreateLibrarianRepository()
         {
             var collection = _database.GetCollection<Librarian>("Librarians");
-            return new MongoLibrarianRepsitory(collection, _database.DatabaseNamespace.DatabaseName);
+            return new MongoLibrarianRepsitory(collection);
         }
         public ILoanRepository CreateLoanRepository()
         {
             var collection = _database.GetCollection<Loan>("Loans");
-            return new MongoLoanRepository(collection, _database.DatabaseNamespace.DatabaseName);
+            return new MongoLoanRepository(collection);
         }
 
     }

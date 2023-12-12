@@ -13,10 +13,9 @@ namespace DAL.Repository.LibrarianRep
     {
         private readonly IMongoCollection<Librarian> _collection;
         private readonly string _databaseName;
-        public MongoLibrarianRepsitory(IMongoCollection<Librarian> collection, string databaseName)
+        public MongoLibrarianRepsitory(IMongoCollection<Librarian> collection)
         {
             _collection = collection;
-            _databaseName = databaseName;
         }
 
         public Librarian GetById(ObjectId id)

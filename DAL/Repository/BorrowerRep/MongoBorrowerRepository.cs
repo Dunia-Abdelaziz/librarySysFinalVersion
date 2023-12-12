@@ -15,10 +15,9 @@ namespace DAL.Repository.BorrowerRep
         private readonly string _databaseName;
 
 
-        public MongoBorrowerRepository(IMongoCollection<Borrower> collection, string databaseName)
+        public MongoBorrowerRepository(IMongoCollection<Borrower> collection)
         {
             _collection = collection;
-            _databaseName = databaseName;
         }
 
         public Borrower GetById(ObjectId id)

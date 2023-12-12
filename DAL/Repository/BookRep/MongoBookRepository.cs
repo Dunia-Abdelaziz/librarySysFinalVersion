@@ -15,10 +15,9 @@ namespace DAL.Repository.BookRep
         private readonly string _databaseName;
 
 
-        public MongoBookRepository(IMongoCollection<Book> collection, string databaseName)
+        public MongoBookRepository(IMongoCollection<Book> collection)
         {
             _collection = collection;
-            _databaseName = databaseName;
         }
 
         public Book GetById(ObjectId id)
